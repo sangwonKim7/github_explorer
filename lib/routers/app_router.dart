@@ -9,8 +9,8 @@ final appRouter = GoRouter(
       builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
-      path: '/detail',
-      builder: (context, state) => const DetailScreen(),
+      path: '/detail/:username',
+      builder: (context, state) => DetailScreen(state.pathParameters['username']!),
     ),
   ],
 );

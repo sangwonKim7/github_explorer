@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_explorer/view_models/repo_view_model.dart';
 import 'package:github_explorer/view_models/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,7 +23,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: userState.when(
         data: (data) => ListView.builder(
-          itemCount: 10,
+          itemCount: data.length,
           itemBuilder: (context, index) {
             final user = data[index - (index ~/ 10)];
             return ListTile(
@@ -31,7 +32,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               title: Text(user.login),
               onTap: () {
-                context.push('/detail');
+                ref.read(repoViewModelProvider.notifier).fetchRepos(user.login);
+                context.push('/detail/${user.login}');
               },
             );
           },
