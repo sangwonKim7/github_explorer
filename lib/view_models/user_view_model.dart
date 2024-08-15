@@ -13,7 +13,6 @@ class UserViewModelNotifier extends AsyncNotifier<List<GitHubUser>> {
   }
 
   Future<void> loadMoreUsers(int since) async {
-    state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       return [...state.value ?? [], ...await _gitHubService.fetchUsers(since, 20)];
     });

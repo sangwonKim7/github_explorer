@@ -13,6 +13,41 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+  int _since = 0;
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent && !_isLoadingMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _loadMore() async {
+    setState(() {
+      _isLoadingMore = true;
+    });
+    final userState = ref.read(userViewModelProvider.notifier);
+    await userState.loadMoreUsers(_since);
+    _since += 20;
+    setState(() {
+      _isLoadingMore = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _scrollController.removeListener(_scrollListener);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final userState = ref.watch(userViewModelProvider);
@@ -22,21 +57,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         centerTitle: true,
       ),
       body: userState.when(
-        data: (data) => ListView.builder(
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            final user = data[index - (index ~/ 10)];
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(user.avatarUrl),
-              ),
-              title: Text(user.login),
-              onTap: () {
-                ref.read(repoViewModelProvider.notifier).fetchRepos(user.login);
-                context.push('/detail/${user.login}');
-              },
-            );
-          },
+        data: (data) => Scrollbar(
+          controller: _scrollController,
+          child: ListView.builder(
+            controller: _scrollController,
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              final user = data[index - (index ~/ 10)];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(user.avatarUrl),
+                ),
+                title: Text(user.login),
+                onTap: () {
+                  ref.read(repoViewModelProvider.notifier).fetchRepos(user.login);
+                  context.push('/detail/${user.login}');
+                },
+              );
+            },
+          ),
         ),
         error: (e, stack) => Center(child: Text('Error: $e')),
         loading: () => const Center(child: CircularProgressIndicator()),
