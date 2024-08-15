@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:github_explorer/view_models/repo_view_model.dart';
+import 'package:github_explorer/views/widgets/border_widget.dart';
 
 class DetailScreen extends ConsumerWidget {
   final String username;
@@ -16,14 +18,26 @@ class DetailScreen extends ConsumerWidget {
         title: Text("$username's repositories"),
       ),
       body: repoState.when(
-        data: (data) => ListView.builder(
+        data: (data) => ListView.separated(
           itemCount: data.length,
+          separatorBuilder: (context, index) => const Divider(thickness: 4, height: 16),
           itemBuilder: (context, index) {
             final repo = data[index];
             return ListTile(
-              title: Text(repo.name),
+              title: Text(
+                repo.name,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               subtitle: Text(repo.description ?? 'No description'),
-              trailing: Text('${repo.stargazersCount} stars'),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  BorderWidget(text: '${repo.stargazersCount} stars'),
+                  const Gap(8),
+                  BorderWidget(text: repo.language),
+                ],
+              ),
             );
           },
         ),

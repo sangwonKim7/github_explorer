@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github_explorer/view_models/repo_view_model.dart';
@@ -68,15 +69,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 return const AdBanner();
               }
               final user = data[index - (index ~/ 10)];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(user.avatarUrl),
+              return Card(
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  leading: CircleAvatar(
+                    backgroundImage: CachedNetworkImageProvider(
+                      user.avatarUrl!,
+                      errorListener: (p0) => const Text('error'),
+                    ),
+                  ),
+                  title: Text(user.login??""),
+                  onTap: () {
+                    ref.read(repoViewModelProvider.notifier).fetchRepos(user.login??"");
+                    context.push('/detail/${user.login}');
+                  },
                 ),
-                title: Text(user.login),
-                onTap: () {
-                  ref.read(repoViewModelProvider.notifier).fetchRepos(user.login);
-                  context.push('/detail/${user.login}');
-                },
               );
             },
           ),
