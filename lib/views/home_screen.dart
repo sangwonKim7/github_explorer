@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github_explorer/view_models/repo_view_model.dart';
 import 'package:github_explorer/view_models/user_view_model.dart';
+import 'package:github_explorer/views/widgets/ad_banner.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -61,8 +62,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           controller: _scrollController,
           child: ListView.builder(
             controller: _scrollController,
-            itemCount: data.length,
+            itemCount: data.length + (data.length ~/ 10),
             itemBuilder: (context, index) {
+              if (index % 10 == 9) {
+                return const AdBanner();
+              }
               final user = data[index - (index ~/ 10)];
               return ListTile(
                 leading: CircleAvatar(
