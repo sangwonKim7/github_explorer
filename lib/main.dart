@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:github_explorer/views/detail_screen.dart';
-import 'package:github_explorer/views/home_screen.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_explorer/routers/app_router.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -18,20 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routerConfig: _router,
+      routerConfig: appRouter,
     );
   }
 }
-
-final GoRouter _router = GoRouter(
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const HomeScreen(),
-    ),
-    GoRoute(
-      path: '/detail',
-      builder: (context, state) => const DetailScreen(),
-    ),
-  ],
-);
