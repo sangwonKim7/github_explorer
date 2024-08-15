@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:github_explorer/core/logger/logger.dart';
+import 'package:github_explorer/core/utils/logger.dart';
 
 class DioClient {
   final Dio _dio = Dio();
