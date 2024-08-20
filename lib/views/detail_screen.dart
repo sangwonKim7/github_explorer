@@ -14,6 +14,7 @@ class DetailScreen extends ConsumerWidget {
     final repoState = ref.watch(repoViewModelProvider);
 
     return Scaffold(
+      key: const Key('detail_screen'),
       appBar: AppBar(
         title: Text("$username's repositories"),
       ),

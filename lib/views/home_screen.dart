@@ -55,6 +55,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final userState = ref.watch(userViewModelProvider);
     return Scaffold(
+      key: const Key('home_screen'),
       appBar: AppBar(
         title: const Text("Github Explorer"),
         centerTitle: true,
