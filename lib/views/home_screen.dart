@@ -23,6 +23,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    Future(() => ref.read(userViewModelProvider.notifier).fetchUsers(0, 20));
   }
 
   void _scrollListener() {

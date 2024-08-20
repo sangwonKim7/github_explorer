@@ -8,8 +8,15 @@ class UserViewModelNotifier extends AsyncNotifier<List<GitHubUser>> {
   final GitHubService _gitHubService = GitHubService();
 
   @override
-  FutureOr<List<GitHubUser>> build() {
-    return _gitHubService.fetchUsers(0, 20);
+  FutureOr<List<GitHubUser>> build() async {
+    return [];
+  }
+
+  Future<void> fetchUsers(int since, int perPage) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      return await _gitHubService.fetchUsers(since, perPage);
+    });
   }
 
   Future<void> loadMoreUsers(int since) async {

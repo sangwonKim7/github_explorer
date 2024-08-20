@@ -6,6 +6,7 @@ import 'package:github_explorer/services/github_service.dart';
 
 class RepoViewModelNotifier extends AsyncNotifier<List<GithubRepo>> {
   final GitHubService _gitHubService = GitHubService();
+
   @override
   FutureOr<List<GithubRepo>> build() {
     return [];
