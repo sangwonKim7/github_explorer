@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_explorer/providers/theme_provider.dart';
 import 'package:github_explorer/view_models/repo_view_model.dart';
 import 'package:github_explorer/view_models/user_view_model.dart';
 import 'package:github_explorer/views/widgets/ad_banner.dart';
@@ -58,6 +58,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: const Text("Github Explorer"),
         centerTitle: true,
+        actions: [
+          Consumer(
+            builder: (context, ref, child) {
+              final isDark = ref.watch(themeProvider) == ThemeMode.dark;
+              return IconButton(
+                  onPressed: () =>
+                      ref.read(themeProvider.notifier).update((state) => isDark ? ThemeMode.light : ThemeMode.dark),
+                  icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode));
+            },
+          ),
+        ],
       ),
       body: userState.when(
         data: (data) => Scrollbar(
@@ -72,16 +83,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               final user = data[index - (index ~/ 10)];
               return Card(
                 child: ListTile(
+                  key: Key('user_list_tile_${index - (index ~/ 10)}'),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   leading: CircleAvatar(
                     backgroundImage: CachedNetworkImageProvider(
-                      user.avatarUrl!,
+                      user.avatarUrl,
                       errorListener: (p0) => const Text('error'),
                     ),
                   ),
-                  title: Text(user.login??""),
+                  title: Text(user.login),
                   onTap: () {
-                    ref.read(repoViewModelProvider.notifier).fetchRepos(user.login??"");
+                    ref.read(repoViewModelProvider.notifier).fetchRepos(user.login);
                     context.push('/detail/${user.login}');
                   },
                 ),
@@ -89,8 +101,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
           ),
         ),
-        error: (e, stack) => Center(child: Text('Error: $e')),
         loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, stack) => ErrorWidget(e),
       ),
     );
   }

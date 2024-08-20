@@ -42,7 +42,7 @@ class DetailScreen extends ConsumerWidget {
           },
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, stack) => Center(child: Text('Error: $e')),
+        error: (e, stack) => ErrorWidget(e),
       ),
     );
   }
